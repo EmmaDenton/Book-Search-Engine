@@ -25,7 +25,6 @@ const typeDefs = gql`
 
   type Query {
     me: User
-    // Other queries can be added as needed
   }
 
   type Mutation {
