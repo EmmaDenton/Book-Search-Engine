@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/queries';
+import { ADD_USER } from '../utils/mutation';
 import { useMutation, gql } from '@apollo/client';
 import Auth from '../utils/auth';
 
@@ -11,20 +11,16 @@ const SignupForm = () => {
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  // Apollo mutation hook
-  const [signUp, { error }] = useMutation(createUser);
+  const [addUser, { error }] = useMutation(ADD_USER);
 
-  // ... rest of your component
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // Additional form validation code...
-
     try {
-      const { data } = await signUp({ variables: userFormData });
+      const { data } = await addUser({ variables: userFormData });
 
-      Auth.login(data.signUp.token);
+      Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);

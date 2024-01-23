@@ -1,23 +1,25 @@
-// see SignupForm.js for comments
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
 import { gql, useMutation } from '@apollo/client';
-import { loginUser } from '../utils/queries';
+import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 
 const LoginForm = () => {
-  // ... existing state hooks
+  const [userFormData, setUserFormData] = useState({ email: '', password: '' });
+  const [validated] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
-  // Apollo mutation hook
-  const [login, { error }] = useMutation(loginUser);
+  const [login, { error }] = useMutation(LOGIN_USER);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUserFormData({ ...userFormData, [name]: value });
+  };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
-    // Additional form validation logic...
-
     try {
       const { data } = await login({ variables: userFormData });
 
@@ -27,9 +29,10 @@ const LoginForm = () => {
       setShowAlert(true);
     }
 
-    // Reset form data
     setUserFormData({ email: '', password: '' });
   };
+
+
 
   return (
     <>
