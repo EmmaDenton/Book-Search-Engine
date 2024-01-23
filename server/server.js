@@ -12,7 +12,9 @@ const app = express();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true,
+  context: ({ req }) => {
+    const user = authMiddleware(req);
+    return { user };}
 });
 
 // Create a new instance of an Apollo server with the GraphQL schema
