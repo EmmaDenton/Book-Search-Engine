@@ -1,4 +1,4 @@
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 
 
 import { useState, useEffect } from 'react';
@@ -10,68 +10,29 @@ import {
   Col
 } from 'react-bootstrap';
 
-import { getMe } from '../utils/queries';
-import { removeBook } from '../utils/queries';
+import { GET_ME } from '../utils/queries';
+import { REMOVE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  const [userData, setUserData] = useState({});
+  const { loading, data } = useQuery(GET_ME);
+  const [removeBookMutation] = useMutation(REMOVE_BOOK);
 
-  // use this to determine if `useEffect()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
-  const [removeBook, { error }] = useMutation(removeBook);
+  const userData = data?.me;
+
   const handleDeleteBook = async (bookId) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-    if (!token) {
-      return false;
-    }
-
     try {
-      const { data } = await removeBook({
+      await removeBook({
         variables: { bookId }
       });
 
-      if (error) {
-        throw new Error('something went wrong!');
-      }
-
-      setUserData(data.removeBook);
-      removeBookId(bookId); // remove book's id from localStorage
+      removeBookId(bookId);
     } catch (err) {
       console.error(err);
-      setShowAlert(true);
     }
   };
 
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-        if (!token) {
-          return false;
-        }
-
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error('something went wrong!');
-        }
-
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getUserData();
-  }, [userDataLength]);
-
-  // if data isn't here yet, say so
   if (!userDataLength) {
     return <h2>LOADING...</h2>;
   }
