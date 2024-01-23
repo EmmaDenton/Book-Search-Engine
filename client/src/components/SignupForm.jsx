@@ -1,22 +1,10 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-// import { createUser } from '../utils/API';
+import { createUser } from '../utils/queries';
 import { useMutation, gql } from '@apollo/client';
 import Auth from '../utils/auth';
 
-
-const SIGNUP_MUTATION = gql`
-  mutation SignUp($username: String!, $email: String!, $password: String!) {
-    signUp(username: $username, email: $email, password: $password) {
-      token
-      user {
-        _id
-        username
-      }
-    }
-  }
-`;
 
 const SignupForm = () => {
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
@@ -24,7 +12,7 @@ const SignupForm = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   // Apollo mutation hook
-  const [signUp, { error }] = useMutation(SIGNUP_MUTATION);
+  const [signUp, { error }] = useMutation(createUser);
 
   // ... rest of your component
 

@@ -3,22 +3,15 @@ import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
 import { gql, useMutation } from '@apollo/client';
-// import { loginUser } from '../utils/API';
+import { loginUser } from '../utils/queries';
 import Auth from '../utils/auth';
 
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      token
-    }
-  }
-`;
 
 const LoginForm = () => {
   // ... existing state hooks
 
   // Apollo mutation hook
-  const [login, { error }] = useMutation(LOGIN_MUTATION);
+  const [login, { error }] = useMutation(loginUser);
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
